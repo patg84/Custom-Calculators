@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PIVPN - Days Until Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            display: flex; /* Added for footer positioning */
+            flex-direction: column; /* Added for footer positioning */
+            min-height: 100vh; /* Added for footer positioning */
+            margin: 0; /* Reset default margin */
+        }
+        .content-wrap { /* Wrapper for content push footer down */
+            flex: 1;
+        }
+        /* Style for the description paragraph */
+        .description {
+            font-size: 1em; /* Adjust size as needed */
+            color: #555; /* Slightly dimmer color */
+            margin-top: 5px; /* Space above the description */
+            margin-bottom: 20px; /* Space below the description */
+        }
+        input, button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        #result {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+            min-height: 1.2em; /* Prevent layout shift when message appears */
+        }
+        .error { /* Style for error messages */
+             color: #DC2626; /* Red color */
+             font-weight: normal;
+        }
+        /* Basic styling for the footer - Adjust as needed */
+        .footer {
+             margin-top: 32px; /* Equivalent to mt-8 roughly */
+             text-align: center;
+             color: #6B7280; /* Equivalent to text-gray-500 */
+             font-size: 0.75rem; /* Equivalent to text-xs */
+             padding-bottom: 10px; /* Some padding at the very bottom */
+        }
+        .footer a {
+            color: #3B82F6; /* Example link color */
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="content-wrap"> <h2>PIVPN - Days Until Calculator</h2>
+        <p class="description">Enter the end date for the PIVPN certificate to calculate the number of days required.</p>
+
+        <label for="targetDate">Enter a date:</label>
+        <input type="date" id="targetDate" min="0001-01-01" max="9999-12-31">
+        <button onclick="calculateDays()">Calculate</button>
+        <p id="result"></p>
+
+        <script>
+            const resultElement = document.getElementById("result"); // Cache result element
+
+            function calculateDays() {
+                const inputDate = document.getElementById("targetDate").value;
+                resultElement.textContent = ""; // Clear previous result/error
+                resultElement.classList.remove("error"); // Clear error styling
+
+                if (!inputDate) {
+                    resultElement.textContent = "Please select a date.";
+                    resultElement.classList.add("error");
+                    return;
+                }
+
+                const target = new Date(inputDate);
+                // Use getUTCFullYear to avoid timezone issues influencing the year check
+                const year = target.getUTCFullYear(); 
+
+                // --- Added Year Validation ---
+                if (isNaN(year)) { // Check if the date string was fundamentally invalid
+                     resultElement.textContent = "Invalid date format.";
+                     resultElement.classList.add("error");
+                     return;
+                }
+
+                if (year < 1 || year > 9999) {
+                    resultElement.textContent = "Please enter a year between 0001 and 9999.";
+                    resultElement.classList.add("error");
+                    return; // Stop execution if the year is out of range
+                }
+                // --- End of Year Validation ---
+
+
+                // Adjust target date to account for timezone offset and ensure it's compared at midnight UTC
+                const targetUTC = new Date(Date.UTC(target.getUTCFullYear(), target.getUTCMonth(), target.getUTCDate()));
+
+                const today = new Date();
+                 // Adjust today's date to account for timezone offset and ensure it's compared at midnight UTC
+                const todayUTC = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
+
+
+                const timeDiff = targetUTC - todayUTC; // Difference in milliseconds
+                // Use Math.round instead of Math.ceil for better accuracy around midnight
+                const daysDiff = Math.round(timeDiff / (1000 * 60 * 60 * 24)); 
+
+                // Format the date nicely for display (YYYY-MM-DD) using UTC parts
+                const formattedDate = targetUTC.toISOString().split('T')[0];
+
+                resultElement.textContent =
+                    daysDiff > 0 ? `📅 ${daysDiff} days until ${formattedDate}` :
+                    daysDiff === 0 ? "Today is the day!" :
+                    `⏳ ${Math.abs(daysDiff)} days ago (${formattedDate})`;
+            }
+
+            // --- Event Listener for Enter Key ---
+            const targetDateInput = document.getElementById('targetDate');
+
+            targetDateInput.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    // event.preventDefault(); // Might uncomment this if Enter causes issues
+                    calculateDays();
+                }
+            });
+            // --- End of added code ---
+        </script>
+    </div> <p class="footer">
+        &copy; Pat's IT Solutions, LLC - 2020 - 2025 - This code was assisted by <a href="https://gemini.google.com/" target="_blank" rel="noopener noreferrer">Gemini</a>.
+    </p>
+
+</body>
+</html>

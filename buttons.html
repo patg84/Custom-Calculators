@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Examples</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+        }
+        h1, h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        button, input[type="button"], input[type="submit"], input[type="reset"] {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Default Button Style */
+        .default {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        .default:hover {
+            background-color: #ddd;
+        }
+
+        /* Primary Button Style */
+        .primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .primary:hover {
+            background-color: #0056b3;
+        }
+
+        /* Secondary Button Style */
+        .secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        .secondary:hover {
+            background-color: #545b62;
+        }
+
+        /* Success Button Style */
+        .success {
+            background-color: #28a745;
+            color: white;
+        }
+        .success:hover {
+            background-color: #1e7e34;
+        }
+
+        /* Danger Button Style */
+        .danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        .danger:hover {
+            background-color: #c82333;
+        }
+
+        /* Warning Button Style */
+        .warning {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        .warning:hover {
+            background-color: #e0a800;
+        }
+
+        /* Info Button Style */
+        .info {
+            background-color: #17a2b8;
+            color: white;
+        }
+        .info:hover {
+            background-color: #117a8b;
+        }
+
+        /* Light Button Style */
+        .light {
+            background-color: #f8f9fa;
+            color: #212529;
+            border: 1px solid #dee2e6;
+        }
+        .light:hover {
+            background-color: #e2e6ea;
+        }
+
+        /* Dark Button Style */
+        .dark {
+            background-color: #343a40;
+            color: white;
+        }
+        .dark:hover {
+            background-color: #1d2124;
+        }
+
+        /* Outline Button Styles */
+        .outline-primary {
+            background-color: transparent;
+            color: #007bff;
+            border: 1px solid #007bff;
+        }
+        .outline-primary:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .outline-secondary {
+            background-color: transparent;
+            color: #6c757d;
+            border: 1px solid #6c757d;
+        }
+        .outline-secondary:hover {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        /* ... Add more outline color styles as needed ... */
+
+    </style>
+</head>
+<body>
+    <h1>Button Type and Color Examples</h1>
+
+    <h2>&lt;button&gt; Element</h2>
+    <div class="button-container">
+        <button class="default">Default</button>
+        <button type="button" class="primary">Primary</button>
+        <button type="submit" class="success">Submit (Success)</button>
+        <button type="reset" class="danger">Reset (Danger)</button>
+        <button type="button" class="secondary">Secondary</button>
+        <button type="button" class="warning">Warning</button>
+        <button type="button" class="info">Info</button>
+        <button type="button" class="light">Light</button>
+        <button type="button" class="dark">Dark</button>
+        <button type="button" class="outline-primary">Outline Primary</button>
+        <button type="button" class="outline-secondary">Outline Secondary</button>
+        </div>
+
+    <h2>&lt;input type="button"&gt;</h2>
+    <div class="button-container">
+        <input type="button" class="default" value="Default">
+        <input type="button" class="primary" value="Primary">
+        <input type="button" class="secondary" value="Secondary">
+        <input type="button" class="success" value="Success">
+        <input type="button" class="danger" value="Danger">
+        <input type="button" class="warning" value="Warning">
+        <input type="button" class="info" value="Info">
+        <input type="button" class="light" value="Light">
+        <input type="button" class="dark" value="Dark">
+        <input type="button" class="outline-primary" value="Outline Primary">
+        <input type="button" class="outline-secondary" value="Outline Secondary">
+        </div>
+
+    <h2>&lt;input type="submit"&gt;</h2>
+    <form action="#">
+        <div class="button-container">
+            <input type="submit" class="default" value="Submit Default">
+            <input type="submit" class="primary" value="Submit Primary">
+            <input type="submit" class="success" value="Submit Success">
+            <input type="submit" class="danger" value="Submit Danger">
+            <input type="submit" class="secondary" value="Submit Secondary">
+            <input type="submit" class="warning" value="Submit Warning">
+            <input type="submit" class="info" value="Submit Info">
+            <input type="submit" class="light" value="Submit Light">
+            <input type="submit" class="dark" value="Submit Dark">
+            <input type="submit" class="outline-primary" value="Submit Outline Primary">
+            <input type="submit" class="outline-secondary" value="Submit Outline Secondary">
+            </div>
+    </form>
+
+    <h2>&lt;input type="reset"&gt;</h2>
+    <form action="#">
+        <input type="text" placeholder="Enter some text">
+        <div class="button-container">
+            <input type="reset" class="default" value="Reset Default">
+            <input type="reset" class="danger" value="Reset Danger">
+            <input type="reset" class="secondary" value="Reset Secondary">
+            </div>
+    </form>
+
+</body>
+</html>

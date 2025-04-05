@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="windows-1252">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wasabi Recurring Billing Schedule Calculator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        function isLeapYear(year) {
+            return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+        }
+
+        function daysBetweenDates(start, end) {
+            const oneDay = 1000 * 60 * 60 * 24;
+            return Math.round((end - start) / oneDay);
+        }
+
+        function generateSchedule() {
+            let startDateInput = document.getElementById("startDate").value;
+            let price = parseFloat(document.getElementById("pricePerEndpoint").value);
+            let taxRate = parseFloat(document.getElementById("taxRate").value);
+
+            if (!startDateInput) {
+                alert("Please select a start date.");
+                return;
+            }
+            if (isNaN(price)) price = 0;
+            if (isNaN(taxRate)) taxRate = 0;
+
+            let startDate = new Date(startDateInput.replace(/-/g, '/'));
+            let tableBody = document.getElementById("scheduleBody");
+            tableBody.replaceChildren();
+
+            for (let i = 0; i < 20; i++) {
+                let serviceStart = new Date(startDate);
+                serviceStart.setFullYear(startDate.getFullYear() + i);
+
+                let serviceEnd = new Date(serviceStart);
+                serviceEnd.setFullYear(serviceStart.getFullYear() + 1);
+                serviceEnd.setDate(serviceEnd.getDate() - 1); // Make it end the day before same date next year
+
+                let invoiceDate = new Date(serviceEnd);
+                invoiceDate.setMonth(invoiceDate.getMonth() - 7); // custom logic as in your original
+
+                let paymentDueDate = new Date(serviceEnd);
+                paymentDueDate.setMonth(paymentDueDate.getMonth() - 1);
+
+                let days = daysBetweenDates(serviceStart, serviceEnd);
+                let leapMark = isLeapYear(serviceEnd.getFullYear()) ? '*' : '';
+
+                let amount = price.toFixed(2);
+                let taxAmount = (price * (taxRate / 100)).toFixed(2);
+                let totalWithTax = (parseFloat(amount) + parseFloat(taxAmount)).toFixed(2);
+
+                let row = document.createElement("tr");
+                row.classList.add("border-b");
+                row.innerHTML = `
+                    <td class='p-2 text-left'>${serviceStart.toLocaleDateString()} - ${serviceEnd.toLocaleDateString()}${leapMark}</td>
+                    <td class='p-2 text-center'>${days}</td>
+                    <td class='p-2 text-center'>${paymentDueDate.toLocaleDateString()}</td>
+                    <td class='p-2 text-center'>$${amount}</td>
+                    <td class='p-2 text-center'>$${totalWithTax}</td>
+                `;
+                tableBody.appendChild(row);
+            }
+
+            document.getElementById("leapNote").style.display = 'block';
+        }
+
+        function exportToExcel() {
+            let customerName = document.getElementById("customerName").value || "Customer";
+            let customerPhone = document.getElementById("customerPhone").value || "";
+            let table = document.getElementById("schedule");
+            let workbook = XLSX.utils.book_new();
+            let worksheetData = [];
+
+            worksheetData.push(["Customer Name:", customerName]);
+            worksheetData.push(["Telephone Number:", customerPhone]);
+            worksheetData.push([]);
+            worksheetData.push(["Service Dates:", "Days:", "Mail Invoice Before:", "Amount:", "With Tax:"]); // Removed "Invoice Date"
+
+            let rows = document.querySelectorAll("#scheduleBody tr");
+            rows.forEach(row => {
+                let cells = row.querySelectorAll("td");
+                worksheetData.push([
+                    cells[0].innerText,
+                    cells[1].innerText,
+                    cells[2].innerText, // Payment Due is now at index 2
+                    cells[3].innerText, // Amount is now at index 3
+                    cells[4].innerText  // With Tax is now at index 4
+                ]);
+            });
+
+            let worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Billing Schedule");
+            XLSX.writeFile(workbook, `Wasabi Billing Schedule - ${customerName.replace(/\s+/g, ' ')}.xlsx`);
+        }
+
+        function formatPhoneNumber() {
+            let phoneInput = document.getElementById("customerPhone");
+            let phone = phoneInput.value.replace(/\D/g, "");
+            if (phone.length === 10) {
+                phoneInput.value = phone.replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3");
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const startDateInput = document.getElementById('startDate');
+            const pricePerEndpointInput = document.getElementById('pricePerEndpoint');
+            const taxRateInput = document.getElementById('taxRate');
+            const generateButton = document.querySelector('button[onclick="generateSchedule()"]');
+
+            // Prepopulate values
+            pricePerEndpointInput.value = '479.88';
+            taxRateInput.value = '6.625';
+
+            startDateInput.addEventListener('input', function() {
+                const currentValue = this.value;
+                const parts = currentValue.split('-');
+                if (parts.length === 3 && parts[0].length > 4) {
+                    this.value = parts[0].slice(0, 4) + '-' + parts[1] + '-' + parts[2];
+                } else if (parts.length === 2 && parts[0].length > 4) {
+                    this.value = parts[0].slice(0, 4) + '-' + parts[1];
+                } else if (currentValue.length > 4 && parts.length <= 1) {
+                    this.value = currentValue.slice(0, 4);
+                }
+            });
+
+            startDateInput.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    generateButton.click();
+                }
+            });
+        });
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="p-6 bg-gray-100">
+<div class="max-w-5xl mx-auto bg-white p-6 rounded-lg shadow">
+    <h2 class="text-2xl font-bold text-center mb-4">Wasabi Recurring Billing Schedule Calculator</h2>
+
+    <label class="block font-bold mb-2">Customer Name:</label>
+    <input type="text" id="customerName" class="p-2 border rounded w-full mb-4" placeholder="Enter customer name">
+
+    <label class="block font-bold mb-2">Telephone Number:</label>
+    <input type="tel" id="customerPhone" class="p-2 border rounded w-full mb-4" placeholder="Enter telephone number" oninput="formatPhoneNumber()">
+
+    <label class="block font-bold mb-2">Select Start Date:</label>
+    <input type="date" id="startDate" class="p-2 border rounded w-full mb-4">
+
+    <label class="block font-bold mb-2">Price per Endpoint:</label>
+    <input type="number" id="pricePerEndpoint" class="p-2 border rounded w-full mb-4" placeholder="e.g. 479.88" step="0.01" value="479.88">
+
+    <label class="block font-bold mb-2">Tax Rate (%):</label>
+    <input type="number" id="taxRate" class="p-2 border rounded w-full mb-4" placeholder="e.g. 6.625" step="0.01" value="6.625">
+
+    <button onclick="generateSchedule()" class="bg-blue-500 text-white p-2 rounded w-full">Generate Schedule</button>
+
+    <table id="schedule" class="w-full mt-4 bg-white border rounded">
+        <thead>
+            <tr class="bg-gray-200">
+                <th class="p-2 font-bold">Service Dates</th>
+                <th class="p-2 font-bold">Days</th>
+                <th class="p-2 font-bold">Mail Invoice Before</th>
+                <th class="p-2 font-bold">Amount</th>
+                <th class="p-2 font-bold">With Tax</th>
+            </tr>
+        </thead>
+        <tbody id="scheduleBody"></tbody>
+    </table>
+
+    <p id="leapNote" class="mt-2 text-sm text-gray-600 hidden">* Indicates that the end year is a leap year.</p>
+
+    <button onclick="exportToExcel()" class="mt-4 bg-green-500 text-white p-2 rounded w-full">Export to Excel</button>
+    <p class="mt-8 text-center text-gray-500 text-xs">
+        &copy; Pat's IT Solutions, LLC - 2020 - 2025 - This code was assisted by <a href="https://gemini.google.com/" target="_blank" rel="noopener noreferrer">Gemini</a>.
+    </p>
+</div>
+</body>
+</html>

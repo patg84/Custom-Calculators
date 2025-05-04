@@ -12,12 +12,18 @@
             currentService = service;
             document.getElementById("calculatorTitle").innerText = `${service} Recurring Billing Schedule Calculator`;
             const body = document.querySelector('body');
+            const priceInput = document.getElementById("pricePerEndpoint");
+            const priceLabel = document.querySelector('label[for="pricePerEndpoint"]');
             if (service === 'Wasabi') {
                 body.classList.remove('bg-orange-100');
                 body.classList.add('bg-green-100');
+                priceInput.value = '479.88'; // Set default for Wasabi
+                priceLabel.innerText = 'Price per Endpoint:'; // Reset label
             } else if (service === 'OPZ3') {
                 body.classList.remove('bg-green-100');
                 body.classList.add('bg-orange-100');
+                priceInput.value = '84.00'; // Set default for OPZ3
+                priceLabel.innerText = 'Price per OPZ3:'; // Update label
             }
         }
 
@@ -103,10 +109,10 @@
                 const firstRowCells = rows[0].querySelectorAll("td")[0].innerText.split(' - ');
                 startYear = firstRowCells[0].split('/')[2];
 
-                // Get the end year from the last row
+                // Get the end year from the last row, carefully removing the asterisk
                 const lastRow = rows[rows.length - 1];
                 const lastRowCells = lastRow.querySelectorAll("td")[0].innerText.split(' - ');
-                endYear = lastRowCells[1].split('/')[2];
+                endYear = lastRowCells[1].replace('*', '').split('/')[2];
             }
 
             rows.forEach(row => {
@@ -144,7 +150,7 @@
             // Set initial background color to green (for Wasabi default)
             body.classList.add('bg-green-100');
 
-            // Prepopulate values
+            // Prepopulate values (this will be overwritten if OPZ3 is clicked)
             pricePerEndpointInput.value = '479.88';
             taxRateInput.value = '6.625';
 
@@ -186,7 +192,7 @@
     <label class="block font-bold mb-2">Select Start Date:</label>
     <input type="date" id="startDate" class="p-2 border rounded w-full mb-4">
 
-    <label class="block font-bold mb-2">Price per Endpoint:</label>
+    <label class="block font-bold mb-2" for="pricePerEndpoint">Price per Endpoint:</label>
     <input type="number" id="pricePerEndpoint" class="p-2 border rounded w-full mb-4" placeholder="e.g. 479.88" step="0.01" value="479.88">
 
     <label class="block font-bold mb-2">Tax Rate (%):</label>

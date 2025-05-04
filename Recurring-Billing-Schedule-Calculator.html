@@ -36,6 +36,13 @@
             return Math.round((end - start) / oneDay);
         }
 
+        function formatDate(date) {
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            const year = date.getFullYear();
+            return `${month}/${day}/${year}`;
+        }
+
         function generateSchedule() {
             let startDateInput = document.getElementById("startDate").value;
             let price = parseFloat(document.getElementById("pricePerEndpoint").value);
@@ -76,9 +83,9 @@
                 let row = document.createElement("tr");
                 row.classList.add("border-b");
                 row.innerHTML = `
-                    <td class='p-2 text-left'>${serviceStart.toLocaleDateString()} - ${serviceEnd.toLocaleDateString()}${leapMark}</td>
+                    <td class='p-2 text-left'>${formatDate(serviceStart)} - ${formatDate(serviceEnd)}${leapMark}</td>
                     <td class='p-2 text-center'>${days}</td>
-                    <td class='p-2 text-center'>${paymentDueDate.toLocaleDateString()}</td>
+                    <td class='p-2 text-center'>${formatDate(paymentDueDate)}</td>
                     <td class='p-2 text-center'>$${amount}</td>
                     <td class='p-2 text-center'>$${totalWithTax}</td>
                 `;

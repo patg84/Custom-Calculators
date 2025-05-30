@@ -1,3 +1,1 @@
-# Custom-Web-Tools
-
-Loads index.html to https://patg84.github.io/Custom-Calculators/
+# Custom Web Tools for Pat's IT Solutions
